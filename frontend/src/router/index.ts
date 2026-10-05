@@ -6,6 +6,7 @@ const routes = [
   { path: '/papers', name: 'Papers', component: () => import('../views/Papers.vue') },
   { path: '/map', name: 'Map', component: () => import('../views/Map.vue') },
   { path: '/violations', name: 'Violations', component: () => import('../views/Violations.vue') },
+  { path: '/rejections', name: 'Rejections', component: () => import('../views/Rejections.vue') },
   { path: '/stats', name: 'Stats', component: () => import('../views/Stats.vue') },
   { path: '/', redirect: '/halls' },
 ]

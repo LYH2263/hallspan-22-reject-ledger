@@ -10,6 +10,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/papers">试卷套 A/B</RouterLink>
         <RouterLink to="/candidates">考生名册</RouterLink>
         <RouterLink to="/violations">违规</RouterLink>
+        <RouterLink to="/rejections">拒绝记录</RouterLink>
         <RouterLink to="/halls">考室</RouterLink>
         <RouterLink to="/stats">统计</RouterLink>
       </nav>

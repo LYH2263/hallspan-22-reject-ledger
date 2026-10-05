@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
@@ -11,6 +11,7 @@ class Hall(Base):
     rows: Mapped[int] = mapped_column(Integer)
     cols: Mapped[int] = mapped_column(Integer)
     min_manhattan: Mapped[int] = mapped_column(Integer, default=2)
+    closed: Mapped[bool] = mapped_column(Boolean, default=False)
 
 class PaperSet(Base):
     __tablename__ = "paper_sets"
@@ -32,3 +33,14 @@ class SeatPlan(Base):
     hall_id: Mapped[int] = mapped_column(ForeignKey("halls.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     result_json: Mapped[str] = mapped_column(Text, default="{}")
+
+class SeatRejection(Base):
+    """拒绝账：一次排座失败的留痕。与方案账互斥——失败只落拒绝行，不落方案。"""
+    __tablename__ = "seat_rejections"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # 考室可能不存在，故不建外键，只记录请求时的 hall_id
+    hall_id: Mapped[int] = mapped_column(Integer)
+    reason_code: Mapped[str] = mapped_column(String(64))
+    detail: Mapped[str] = mapped_column(String(255))
+    persisted: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
