@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
 const s = ref<any>({})
-onMounted(async () => { s.value = await api('/seating/stats?hall_id=1') })
+onMounted(async () => { try { s.value = await api('/seating/stats?hall_id=1') } catch { /* 尚无方案 */ } })
 </script>
 <template>
   <h1>统计</h1>

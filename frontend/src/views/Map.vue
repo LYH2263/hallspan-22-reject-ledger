@@ -4,8 +4,16 @@ import { api } from '../api'
 const data = ref<any>(null)
 const candidates = ref<any[]>([])
 const violKeys = ref<Set<string>>(new Set())
+const rejection = ref<any>(null)
 async function run() {
-  data.value = await api('/seating/run?hall_id=1', { method: 'POST' })
+  try {
+    data.value = await api('/seating/run?hall_id=1', { method: 'POST' })
+    rejection.value = null
+  } catch (e: any) {
+    // 失败走拒绝账：图保持操作前，仅展示拒绝行
+    if (e?.body?.reason_code) rejection.value = e.body
+    return
+  }
   try {
     const v = await api('/seating/violations?hall_id=1')
     const keys = new Set<string>()
@@ -46,6 +54,9 @@ function paperClass(pid: number) {
   <h1>考场课桌网格</h1>
   <p class="sub">课桌网格为主视图 · 左侧考生名册夹板 · 违规课桌高亮</p>
   <button class="btn" @click="run">重新排座</button>
+  <div v-if="rejection" class="card hs-reject-banner">
+    排座被拒绝 · {{ rejection.reason_code }}：{{ rejection.detail }}（未写库，图保持上一次方案）
+  </div>
   <div class="hs-classroom" style="margin-top:0.85rem">
     <aside class="hs-clipboard">
       <h2>考生名册</h2>

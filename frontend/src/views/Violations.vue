@@ -3,9 +3,13 @@ import { onMounted, ref } from 'vue'
 import { api } from '../api'
 const viols = ref<any[]>([])
 const unplaced = ref<any[]>([])
+const rejections = ref<any[]>([])
 onMounted(async () => {
-  const res = await api('/seating/violations?hall_id=1')
-  viols.value = res.violations; unplaced.value = res.unplaced
+  try {
+    const res = await api('/seating/violations?hall_id=1')
+    viols.value = res.violations; unplaced.value = res.unplaced
+  } catch { /* 尚无方案：违规账为空 */ }
+  rejections.value = await api('/seating/rejections?hall_id=1')
 })
 </script>
 <template>
@@ -25,5 +29,18 @@ onMounted(async () => {
   <div class="card" v-if="unplaced.length">
     <h3>未排上</h3>
     <div v-for="u in unplaced" :key="u.id">{{ u.name }}（{{ u.ticket_no }}）</div>
+  </div>
+  <div class="card">
+    <h3>拒绝记录</h3>
+    <table>
+      <thead><tr><th>时间</th><th>原因码</th><th>说明</th><th>已写库</th></tr></thead>
+      <tbody>
+        <tr v-for="r in rejections" :key="r.id">
+          <td>{{ r.created_at }}</td><td>{{ r.reason_code }}</td><td>{{ r.detail }}</td>
+          <td><span class="badge badge-bad">否</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-if="!rejections.length" class="muted">无拒绝记录</p>
   </div>
 </template>
